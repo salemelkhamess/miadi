@@ -52,6 +52,7 @@ class _BookingPageState extends State<BookingPage> {
   //declaration
   CalendarFormat _format = CalendarFormat.month;
   DateTime _focusDay = DateTime.now();
+
   DateTime _currentDay = DateTime.now();
   int? _currentIndex;
   bool _isWeekend = true;
@@ -809,7 +810,7 @@ class _BookingPageState extends State<BookingPage> {
       locale: 'fr_FR',
       focusedDay: _focusDay,
       firstDay: DateTime.now(),
-      lastDay: DateTime(2023, 12, 31),
+      lastDay: DateTime(2024, 12, 31),
       calendarFormat: _format,
       currentDay: _currentDay,
       rowHeight: 48,

@@ -9,7 +9,6 @@ class AuthModel extends ChangeNotifier {
 
   bool _isLogin = false;
 
-
   Map<String, dynamic> user = {}; //update user details when login
   Map<String,dynamic> appointment =
   {}; //update upcoming appointment when login
