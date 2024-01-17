@@ -7,6 +7,7 @@ import 'package:rdv/components/appointment_card.dart';
 import 'package:rdv/components/doctor_card.dart';
 import 'package:rdv/models/auth_model.dart';
 import 'package:rdv/screens/site_by_cartier.dart';
+import 'package:rdv/screens/whatsapp.dart';
 import 'package:rdv/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -143,6 +144,10 @@ class _HomePageState extends State<HomePage> {
     var _width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+/*
+      floatingActionButton: WhatsAppFloatingButton(),
+*/
+
       body: sites.isEmpty
           ? const Center(
         child: CircularProgressIndicator(),
@@ -390,3 +395,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+

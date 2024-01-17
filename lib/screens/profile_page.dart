@@ -9,6 +9,7 @@ import "../models/auth_model.dart";
 import "../providers/dio_provider.dart";
 import 'package:provider/provider.dart';
 
+import "contact.dart";
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -136,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Icon(
-                              Icons.history,
+                              Icons.phone,
                               color: Colors.yellowAccent[400],
                               size: 35,
                             ),
@@ -144,9 +145,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               width: 20,
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                       Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) =>  ContactUsApp()),
+                                );
+                              },
                               child:  Text(
-                                AppLocalizations.of(context)!.historique,
+                                AppLocalizations.of(context)!.contact_us,
                                 style: TextStyle(
                                   color: Config.primaryColor,
                                   fontSize: 15,
