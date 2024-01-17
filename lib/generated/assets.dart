@@ -3,12 +3,21 @@ class Assets {
   Assets._();
 
   static const String assets2 = 'assets/2.jpeg';
+  static const String assetsBk = 'assets/bk.png';
+  static const String assetsCl = 'assets/cl.jpg';
+  static const String assetsCl1 = 'assets/cl1.jpg';
+  static const String assetsCl2 = 'assets/Cl2.jpg';
   static const String assetsDoctor2 = 'assets/doctor_2.jpg';
   static const String assetsFacebook = 'assets/facebook.png';
+  static const String assetsFavorite = 'assets/favorite.svg';
   static const String assetsGoogle = 'assets/google.png';
+  static const String assetsMenuDown = 'assets/menu_down.svg';
+  static const String assetsSearch = 'assets/search.svg';
   static const String assetsSuccess = 'assets/success.json';
   static const String assetsUser = 'assets/user.jpeg';
   static const String i18nAr = 'assets/i18n/ar.json';
   static const String i18nFr = 'assets/i18n/fr.json';
+  static const String miadiAssetsCl = 'assets/cl.png';
+  static const String miadiAssetsCl2 = 'assets/Cl2.png';
 
 }

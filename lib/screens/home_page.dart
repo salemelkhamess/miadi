@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:rdv/components/appointment_card.dart';
 import 'package:rdv/components/doctor_card.dart';
 import 'package:rdv/models/auth_model.dart';
@@ -15,8 +16,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import '../components/custom_image.dart';
+import '../components/favorite_box.dart';
 import '../providers/dio_provider.dart';
 import '../providers/lang_provider.dart';
+import '../utils/color.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -90,6 +94,10 @@ class _HomePageState extends State<HomePage> {
     _selectedLocale = locale;
   }
 
+  late String _selectedLocation ="FR";
+
+  var _locations = ['FR', 'AR', 'EN'];
+
 
   Future<void> check() async {
     final secureStorage = FlutterSecureStorage();
@@ -124,185 +132,261 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     Config().init(context);
     user = Provider.of<AuthModel>(context, listen: false).getUser;
     doctor = Provider.of<AuthModel>(context, listen: false).getAppointment;
     favList = Provider.of<AuthModel>(context, listen: false).getFav;
-    sites = Provider.of<AuthModel>(context,listen: false).getSite;
-    cartier = Provider.of<AuthModel>(context,listen: false).getCartier;
+    sites = Provider.of<AuthModel>(context, listen: false).getSite;
+    cartier = Provider.of<AuthModel>(context, listen: false).getCartier;
+
+    var _height = MediaQuery.of(context).size.height;
+    var _width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      //if user is empty, then return progress indicator
       body: sites.isEmpty
           ? const Center(
-              child: CircularProgressIndicator(),
-            )
+        child: CircularProgressIndicator(),
+      )
           : Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 15,
-              ),
-              child: SafeArea(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            AppLocalizations.of(context)!.choisirVotreClinique,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                           SizedBox(
-                            child : DropdownButton<Locale>(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 15,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
 
-                              value: _selectedLocale,
-                              onChanged: (Locale? newLocale) {
-                                if (newLocale != null) {
-                                  _onLocaleChanged(newLocale);
-                                  setState(() {
-                                    _selectedLocale = newLocale;
-                                  });
-                                }
-                              },
-                              items: [
-                                DropdownMenuItem(
-                                  value: Locale('en'),
-                                  child: Text('English'),
-                                ),
-                                DropdownMenuItem(
-                                  value: Locale('fr'),
-                                  child: Text('Français'),
-                                ),
-                                DropdownMenuItem(
-                                  value: Locale('ar'),
-                                  child: Text('العربية'),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      Config.spaceMedium,
-                       Text(
-                         AppLocalizations.of(context)!.rechercheParClinique,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Config.spaceSmall,
+        Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.bv ,
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      color: AppColor.darker,
+                      fontFamily: "Metropolis",
+                      fontWeight: FontWeight.w900),
+                ),
+
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 25.0),
+              child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.appname ,
+                    style: TextStyle(
+                        fontSize: 11.0,
+                        color: Colors.black,
+                        fontFamily: "Metropolis",
+                        fontWeight: FontWeight.w300),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+
+
                       SizedBox(
-                        height: 120,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: List<Widget>.generate(cartier.length, (index) {
-                            return   Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8), // Adjust the horizontal padding as needed
-                              child: Column(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pushNamed(context, 'site_by_cartier',
-                                          arguments: {'id': cartier[index]['id']});
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 37,
-                                      backgroundColor: Colors.white,
-                                      child: Image.asset(
-                                        "assets/cl.png",
-                                        fit: BoxFit.cover, // Adjust the fit as needed
-                                      ),
-                                    ),
-                                  ),
+                        child : DropdownButton<Locale>(
 
-                                  Text(
-                                   "${  AppLocalizations.of(context)!.clinique} ${cartier[index]['name']}",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                    ),
-                                  )
-
-                                ],
-                              ),
-                            );
-
-                          }),
+                          value: _selectedLocale,
+                          onChanged: (Locale? newLocale) {
+                            if (newLocale != null) {
+                              _onLocaleChanged(newLocale);
+                              setState(() {
+                                _selectedLocale = newLocale;
+                              });
+                            }
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: Locale('en'),
+                              child: Text('English',style: TextStyle( fontFamily: "Metropolis",)),
+                            ),
+                            DropdownMenuItem(
+                              value: Locale('fr'),
+                              child: Text('Français',style: TextStyle( fontFamily: "Metropolis",),),
+                            ),
+                            DropdownMenuItem(
+                              value: Locale('ar'),
+                              child: Text('العربية',style: TextStyle( fontFamily: "Metropolis",)),
+                            ),
+                          ],
                         ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            Padding(
+              padding:
+              const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+              child: Container(
+                height: _height * 0.06,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(28)),
+                    color: Colors.grey.withOpacity(0.25)),
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 20),
+                  child: Row(
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        "assets/search.svg",
+                        height: 20,
+                        color: AppColor.blue,
                       ),
-
-                /*      Config.spaceSmall,
-                       Text(
-                        AppLocalizations.of(context)!.rechercheParSp,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),*/
-
-                      Config.spaceSmall,
                       Padding(
-                        padding:  EdgeInsets.all(8.0),
-                        child: TextField(
-                          onChanged: filterDoctorList,
-                          decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context)!.dr_by_name,
-                          ),
+                        padding: const EdgeInsetsDirectional.only(start: 20),
+                        child: Text(
+                          "search",
+                          style: TextStyle(
+                              fontFamily: "Metropolis",
+                              fontWeight: FontWeight.w300,
+                              fontSize: 14,
+                              color: Colors.grey),
                         ),
                       ),
-                      // Liste des docteurs filtrée
-
-                      Column(
-                        children: [
-                          // Liste des docteurs filtrée (Visible seulement si la recherche est active)
-                          Visibility(
-                            visible: isSearchVisible,
-                            child: Column(
-                              children: List.generate(filteredSites.length, (index) {
-                                return DoctorCard(
-                                  doctor: filteredSites[index],
-                                  //if lates fav list contains particular doctor id, then show fav icon
-                                  isFav: favList
-                                      .contains(filteredSites[index]['id'])
-                                      ? true
-                                      : false,
-                                );
-                              }
-                              ),
-                            ),
-                          ),
-                          // Liste des docteurs complète (Visible si la recherche n'est pas active)
-                          Visibility(
-                            visible: !isSearchVisible,
-                            child: Column(
-                              children: List.generate(sites.length, (index) {
-                                return DoctorCard(
-                                  doctor: sites[index],
-                                  //if lates fav list contains particular doctor id, then show fav icon
-                                  isFav: favList
-                                      .contains(sites[index]['id'])
-                                      ? true
-                                      : false,
-                                );
-                              }),
-                            ),
-                          ),
-                        ],
-                      ),
-
-
                     ],
                   ),
                 ),
               ),
             ),
+      ]
+      ),
+    ),
+
+            Expanded(
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: cartier.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, 'site_by_cartier',
+                          arguments: {'id': cartier[index]['id']});
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 300,
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.shadowColor.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 1,
+                            offset: Offset(1, 1),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildImage(),
+                          Container(
+                            width: 280 - 20,
+                            padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildName("${  AppLocalizations.of(context)!.clinique} ${cartier[index]['name']}",),
+                                SizedBox(height: 2),
+                                _buildInfo(
+                                    "${cartier[index]['address']}"
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildName(String text) {
+    return Text(
+      text,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontSize: 18,
+        color: AppColor.textColor,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Widget _buildInfo(String text) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Adresse',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColor.labelColor,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColor.primary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Spacer(), // Utilisez Spacer pour occuper l'espace disponible
+
+        FavoriteBox(
+          size: 16,
+          onTap: (){},
+          isFavorited: false,
+        )
+      ],
+    );
+
+  }
+
+  Widget _buildImage() {
+    return CustomImage(
+    'assets/Cl2.png',
+      width: double.infinity,
+      height: 190,
+      radius: 15,
     );
   }
 }

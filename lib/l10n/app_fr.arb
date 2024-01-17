@@ -90,14 +90,8 @@
             "copied":"copié avec succès",
             "tottal_pay" :"Total à payer",
             "code_bpay":"Code B-PAY",
-            "clinique":"Clinique"
-
-
-
-
-
-
-
-
+            "clinique":"Clinique",
+            "bv":"Bienvenue dans l'application MIADI",
+            "appname": "MIADI"
 
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:rdv/components/appointment_card.dart';
 import 'package:rdv/components/doctor_card.dart';
 import 'package:rdv/models/auth_model.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../main.dart';
 import '../providers/dio_provider.dart';
+import '../utils/color.dart';
 import 'doctor_details.dart';
 
 class SiteByCartier extends StatefulWidget {
@@ -116,6 +118,10 @@ class _SiteByCartierState extends State<SiteByCartier> {
 
   }
 
+  late String _selectedLocation ="FR";
+
+  var _locations = ['FR', 'AR', 'EN'];
+
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -140,30 +146,40 @@ class _SiteByCartierState extends State<SiteByCartier> {
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
+                  children: [
                     Text(
-                      AppLocalizations.of(context)!.you_can,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                AppLocalizations.of(context)!.appname ,
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: AppColor.darker,
+                          fontFamily: "Metropolis",
+                          fontWeight: FontWeight.w900),
                     ),
 
-                    Text(
-                      AppLocalizations.of(context)!.ser_by,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      child: CircleAvatar(
-                        radius: 30,
-                        backgroundImage:
-                        AssetImage('assets/doctor_1.jpg'),
-                      ),
-                    )
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "MIADI",
+                        style: TextStyle(
+                            fontSize: 11.0,
+                            color: Colors.black,
+                            fontFamily: "Metropolis",
+                            fontWeight: FontWeight.w300),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+
+
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
 
 
