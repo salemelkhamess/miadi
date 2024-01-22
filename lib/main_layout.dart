@@ -36,7 +36,10 @@ class _MainLayoutState extends State<MainLayout> {
         ],
       ),
       bottomNavigationBar: FloatingNavbar(
-        currentIndex: currentPage,
+        margin: EdgeInsets.all( 0.0),
+        padding: EdgeInsets.only(bottom:3.0,top: 3),
+
+      currentIndex: currentPage,
         onTap: (page) {
           setState(() {
             currentPage = page;

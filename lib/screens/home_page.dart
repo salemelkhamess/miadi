@@ -201,7 +201,7 @@ class _HomePageState extends State<HomePage> {
 
                 AnimatedTextKit(animatedTexts: [
                   TypewriterAnimatedText( AppLocalizations.of(context)!.bv , textStyle: const TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.green,
 

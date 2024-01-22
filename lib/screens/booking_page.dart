@@ -406,7 +406,7 @@ class _BookingPageState extends State<BookingPage> {
                                                                       Row(
                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                         children: [
-                                                                          Text('${AppLocalizations.of(context)!.code_bpay} : 017028',style: TextStyle(fontSize: 22,color: Colors.black),),
+                                                                          Text('${AppLocalizations.of(context)!.code_bpay} : 017028',style: TextStyle(fontSize: 18,color: Colors.black),),
                                                                           InkWell(
                                                                               onTap: () async {
                                                                                 await Clipboard.setData(ClipboardData(text: "017028"));
