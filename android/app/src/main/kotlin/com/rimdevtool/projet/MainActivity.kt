@@ -1,4 +1,4 @@
-package com.rimdevtools.projet
+package com.rimdevtool.projet
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,4 +1,4 @@
-package com.rimdevtools.rdv
+package com.rimdevtool.miadi
 
 import io.flutter.embedding.android.FlutterActivity
 
