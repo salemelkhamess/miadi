@@ -1,3 +1,4 @@
+import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:rdv/screens/appointment_page.dart';
 import 'package:rdv/screens/fav_page.dart';
 import 'package:rdv/screens/home_page.dart';
@@ -34,7 +35,27 @@ class _MainLayoutState extends State<MainLayout> {
           ProfilePage(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: FloatingNavbar(
+        currentIndex: currentPage,
+        onTap: (page) {
+          setState(() {
+            currentPage = page;
+            _page.animateToPage(
+              page,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
+          });
+        },
+        items: [
+          FloatingNavbarItem(icon: Icons.home, title: AppLocalizations.of(context)!.accueil),
+          FloatingNavbarItem(icon: Icons.explore, title: AppLocalizations.of(context)!.rdv),
+          FloatingNavbarItem(icon: Icons.supervised_user_circle_sharp, title: AppLocalizations.of(context)!.profile),
+        ],
+        backgroundColor: Colors.green,
+      ),
+
+      /* bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentPage,
         onTap: (page) {
           setState(() {
@@ -65,7 +86,7 @@ class _MainLayoutState extends State<MainLayout> {
             label: AppLocalizations.of(context)!.profile,
           ),
         ],
-      ),
+      ),*/
     );
   }
 }

@@ -38,7 +38,6 @@ class _ProfilePageState extends State<ProfilePage> {
     // print("**************");
     // print(user);
 
-
     return Column(
       children: [
         Expanded(
@@ -146,13 +145,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             TextButton(
                               onPressed: () {
-                                       Navigator.push(
+                                Navigator.pushNamed(context, 'contact');
+
+                                    /*        Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) =>  ContactUsApp()),
-                                );
+                                );*/
                               },
                               child:  Text(
-                                AppLocalizations.of(context)!.contact_us,
+                                AppLocalizations.of(context)!.contact,
                                 style: TextStyle(
                                   color: Config.primaryColor,
                                   fontSize: 15,

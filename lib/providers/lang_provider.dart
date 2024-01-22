@@ -6,7 +6,7 @@ class LanguageProvider extends ChangeNotifier {
   Locale get selectedLocale => _selectedLocale;
 
   set selectedLocale(Locale locale) {
-    _selectedLocale = locale;
+    _selectedLocale = Locale(locale.languageCode);
     notifyListeners();
   }
 }

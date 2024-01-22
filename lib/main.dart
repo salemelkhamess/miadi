@@ -4,6 +4,7 @@ import 'package:rdv/models/auth_model.dart';
 import 'package:rdv/providers/lang_provider.dart';
 import 'package:rdv/screens/auth_page.dart';
 import 'package:rdv/screens/booking_page.dart';
+import 'package:rdv/screens/contact.dart';
 import 'package:rdv/screens/doctor_by_sp.dart';
 import 'package:rdv/screens/site_by_cartier.dart';
 import 'package:rdv/screens/success_booked.dart';
@@ -124,10 +125,14 @@ class _MyAppState extends State<MyApp> {
                 'main': (context) =>  MainLayout(),
                 'booking_page': (context) => BookingPage(),
                 'success_booking': (context) => const AppointmentBooked(),
+                'contact': (context) =>   ContactUsApp(),
+
                 'site_by_cartier': (context) {
                   final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
                   final id = args['id'] as int?;
-                  return SiteByCartier(id: id);
+                  final name = args['name'] as String?;
+
+                  return SiteByCartier(id: id,name: name,);
 
                 },
 

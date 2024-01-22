@@ -1,11 +1,15 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:rdv/models/contact.dart';
 import 'package:rdv/utils/config.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../components/custom_appbar.dart';
 
 class ContactUsApp extends StatelessWidget {
 
@@ -15,7 +19,7 @@ class ContactUsApp extends StatelessWidget {
     final appLocalization = AppLocalizations.of(context);
 
     return MaterialApp(
-      title: appLocalization?.contact_us ?? 'Contact Us',
+      title: 'Contact Us',
       home: ContactUsPage(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -27,12 +31,17 @@ class ContactUsApp extends StatelessWidget {
 
 class ContactUsPage extends StatefulWidget {
 
-
   @override
   State<ContactUsPage> createState() => _ContactUsPageState();
 }
 
 class _ContactUsPageState extends State<ContactUsPage> {
+  static const colorizeColors = [
+    Colors.purple,
+    Colors.blue,
+    Colors.yellow,
+    Colors.red,
+  ];
 
   Future<List<Contact>> fetchContact() async {
     final response = await http.get(Uri.parse('${Config.baseUrl}/contact'));
@@ -71,12 +80,11 @@ class _ContactUsPageState extends State<ContactUsPage> {
     final appLocalization = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text( appLocalization?.contact_us ?? 'Contact Us',),
-        backgroundColor: Colors.green,
+      appBar: CustomAppBar(
+        appTitle:'Contactez-nous',
+
 
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child:FutureBuilder<List<Contact>>(
@@ -90,34 +98,46 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
                   return Column(
                     children: [
-                      Padding(
 
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: (){
-                              },
-                                child: Icon(
-                                    Icons.arrow_back_ios,
-                                  color: Colors.green,
-                                  size: 20,
-                                )
-                            )
-                          ],
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Card(
+                          elevation: 2, // Ajoutez l'élévation souhaitée pour le Card
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.only(left: 5, top: 5),
+                            width: MediaQuery.of(context).size.width,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Center(
+                              child: AnimatedTextKit(
+                                animatedTexts: [
+                                  ColorizeAnimatedText(
+                                    'Contactez-nous ',
+                                    textStyle: TextStyle(
+                                        fontSize: 22
+                                    ),
+                                    colors: colorizeColors,
+                                  ),
+                                ],
+                                isRepeatingAnimation: true,
+                                pause: const Duration(milliseconds: 1000),
+                                displayFullTextOnTap: true,
+                                stopPauseOnTap: true,
+                                onTap: () {
+                                  print("Tap Event");
+                                },
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      Padding
-                        (padding: EdgeInsets.all(4.0),
-                        child: Center(
-                          child: Text('Conactez-nous',style: TextStyle(color: Colors.green,
-                          fontSize: 18),),
-                        ),
 
-
-                      )
-                      ,
                       Card(
                         elevation: 3,
                         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -149,7 +169,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         ),
                       ),
                       InkWell(
-                        onTap: () => _launchURL('www.facebook.com'), // Update the URL here
+                        onTap: () => _launchURL('${patient.fb}'), // Update the URL here
                         child: Card(
                           elevation: 3,
                           margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -166,67 +186,83 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           ),
                         ),
                       ),
-                      Card(
-                        elevation: 3,
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: ListTile(
-                          leading: Icon(Icons.whatshot),
-                          title: Text(
-                            'Whatsapp',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                      InkWell(
+                        onTap: () => _launchURL('${patient.wh}'), // Update the URL here
+
+                        child: Card(
+                          elevation: 3,
+                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          subtitle: Text(patient.wh),
+                          child: ListTile(
+                            leading: Icon(Icons.whatshot),
+                            title: Text(
+                              'Whatsapp',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(patient.wh),
+                          ),
                         ),
                       ),
 
-                      Card(
-                        elevation: 3,
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: ListTile(
-                          leading: Icon(Icons.snapchat),
-                          title: Text(
-                            'Snap chat',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                      InkWell(
+                        onTap: () => _launchURL('${patient.sn}'), // Update the URL here
+
+                        child: Card(
+                          elevation: 3,
+                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          subtitle: Text(patient.fb),
+                          child: ListTile(
+                            leading: Icon(Icons.snapchat),
+                            title: Text(
+                              'Snap chat',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(patient.fb),
+                          ),
                         ),
                       ),
 
-                      Card(
-                        elevation: 3,
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: ListTile(
-                          leading: Icon(Icons.email),
-                          title: Text(
-                            'Email',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                      InkWell(
+                        onTap: () => _launchURL('${patient.email}'), // Update the URL here
+
+                        child: Card(
+                          elevation: 3,
+                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          subtitle: Text(patient.fb),
+                          child: ListTile(
+                            leading: Icon(Icons.email),
+                            title: Text(
+                              'Email',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(patient.fb),
+                          ),
                         ),
                       ),
 
-                      Card(
-                        elevation: 3,
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: ListTile(
-                          leading: Icon(Icons.phone),
-                          title: Text(
-                            'Instagrame',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                      InkWell(
+                        onTap: () => _launchURL('${patient.ins}'), // Update the URL here
+
+                        child: Card(
+                          elevation: 3,
+                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          subtitle: Text(patient.fb),
+                          child: ListTile(
+                            leading: Icon(Icons.phone),
+                            title: Text(
+                              'Instagrame',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(patient.fb),
+                          ),
                         ),
                       ),
 
@@ -237,7 +273,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
             } else {
               return const Center(child: CircularProgressIndicator());
             }
-
             },
         ),
       ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -70,10 +71,10 @@ class _HomePageState extends State<HomePage> {
   bool isSearchVisible = false; // État pour contrôler la visibilité du champ de recherche
 
   // Fonction pour effectuer la recherche
-  void filterDoctorList(String query) {
+  void filterCliniqueList(String query) {
     setState(() {
-      filteredSites = sites
-          .where((doctor) => doctor['name'].toLowerCase().contains(query.toLowerCase()))
+      filteredCartier = cartier
+          .where((cartier) => cartier['name'].toLowerCase().contains(query.toLowerCase()))
           .toList();
       isSearchVisible=true;
     });
@@ -84,7 +85,20 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     check();
     _initializeData();
-    print(sites);
+
+    _searchController.addListener(() {
+      // Mettez à jour la liste filtrée chaque fois que le texte de recherche change
+      setState(() {
+        filteredCartier = cartier
+            .where((clinic) => clinic['name']
+            .toLowerCase()
+            .contains(_searchController.text.toLowerCase()))
+            .toList();
+           isSearchVisible=true;
+      });
+
+    });
+
   }
 
 
@@ -98,7 +112,6 @@ class _HomePageState extends State<HomePage> {
   late String _selectedLocation ="FR";
 
   var _locations = ['FR', 'AR', 'EN'];
-
 
   Future<void> check() async {
     final secureStorage = FlutterSecureStorage();
@@ -130,7 +143,15 @@ class _HomePageState extends State<HomePage> {
       }
     }
   }
-
+// Déclarez un contrôleur pour le TextFormField
+  final TextEditingController _searchController = TextEditingController();
+  List<dynamic> filteredCartier = []; // Nouvelle liste filtrée
+  static const colorizeColors = [
+    Colors.purple,
+    Colors.blue,
+    Colors.yellow,
+    Colors.red,
+  ];
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -169,14 +190,31 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+         /*       Text(
                   AppLocalizations.of(context)!.bv ,
                   style: TextStyle(
                       fontSize: 16.0,
                       color: AppColor.darker,
                       fontFamily: "Metropolis",
                       fontWeight: FontWeight.w900),
-                ),
+                ),*/
+
+                AnimatedTextKit(animatedTexts: [
+                  TypewriterAnimatedText( AppLocalizations.of(context)!.bv , textStyle: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+
+                  ),
+                    speed: const Duration(milliseconds: 300),
+                  ),
+
+                ],
+                  totalRepeatCount: 10,
+                  pause: const Duration(milliseconds: 1000),
+                  displayFullTextOnTap: true,
+                  stopPauseOnTap: true,
+                )
 
               ],
             ),
@@ -196,8 +234,6 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-
-
                       SizedBox(
                         child : DropdownButton<Locale>(
 
@@ -206,7 +242,7 @@ class _HomePageState extends State<HomePage> {
                             if (newLocale != null) {
                               _onLocaleChanged(newLocale);
                               setState(() {
-                                _selectedLocale = newLocale;
+                                _selectedLocale = Locale(newLocale.languageCode);
                               });
                             }
                           },
@@ -235,93 +271,155 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-              child: Container(
-                height: _height * 0.06,
-                decoration: BoxDecoration(
+              child:TextFormField(
+                onChanged: filterCliniqueList,
+                style: TextStyle(
+                  fontFamily: "Metropolis",
+                  fontWeight: FontWeight.w300,
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsetsDirectional.only(start: 20),
+                  hintText: AppLocalizations.of(context)!.rechercheParClinique,
+                  hintStyle: TextStyle(
+                    color: Colors.black,
+                  ),
+                  prefixIcon: Padding(
+                    padding: EdgeInsetsDirectional.only(end: 12),
+                    child: Icon(
+                      Icons.search
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey.withOpacity(0.25),
+                  border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(28)),
-                    color: Colors.grey.withOpacity(0.25)),
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 20),
-                  child: Row(
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        "assets/search.svg",
-                        height: 20,
-                        color: AppColor.blue,
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(start: 20),
-                        child: Text(
-                          "search",
-                          style: TextStyle(
-                              fontFamily: "Metropolis",
-                              fontWeight: FontWeight.w300,
-                              fontSize: 14,
-                              color: Colors.grey),
-                        ),
-                      ),
-                    ],
+                    borderSide: BorderSide.none,
                   ),
                 ),
               ),
+
             ),
       ]
       ),
     ),
 
-            Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: cartier.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, 'site_by_cartier',
-                          arguments: {'id': cartier[index]['id']});
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 300,
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.shadowColor.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 1,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildImage(),
-                          Container(
-                            width: 280 - 20,
-                            padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildName("${  AppLocalizations.of(context)!.clinique} ${cartier[index]['name']}",),
-                                SizedBox(height: 2),
-                                _buildInfo(
-                                    "${cartier[index]['address']}"
-                                ),
-                              ],
+            Visibility(
+              visible: !isSearchVisible,
+
+              child: Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: cartier.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, 'site_by_cartier',
+                            arguments: {'id': cartier[index]['id'],'name':cartier[index]['name']});
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 300,
+                        padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColor.shadowColor.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 1,
+                              offset: Offset(1, 1),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildImage(),
+                            Container(
+                              width: 280 - 20,
+                              padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildName("${  AppLocalizations.of(context)!.clinique} ${cartier[index]['name']}",),
+                                  SizedBox(height: 2),
+                                  _buildInfo(
+                                      "${cartier[index]['address']}"
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
+
+            Visibility(
+              visible: isSearchVisible,
+
+              child: Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: filteredCartier.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, 'site_by_cartier',
+                            arguments: {'id': filteredCartier[index]['id'],'name':cartier[index]['name']});
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 300,
+                        padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColor.shadowColor.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 1,
+                              offset: Offset(1, 1),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildImage(),
+                            Container(
+                              width: 280 - 20,
+                              padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildName("${  AppLocalizations.of(context)!.clinique} ${filteredCartier[index]['name']}",),
+                                  SizedBox(height: 2),
+                                  _buildInfo(
+                                      "${filteredCartier[index]['address']}"
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+
           ],
         ),
       ),

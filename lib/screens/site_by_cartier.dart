@@ -13,19 +13,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../components/custom_appbar.dart';
 import '../main.dart';
 import '../providers/dio_provider.dart';
 import '../utils/color.dart';
 import 'doctor_details.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class SiteByCartier extends StatefulWidget {
   final id;
+  final name;
 
-  const SiteByCartier({required this.id}) ;
-
+  const SiteByCartier({required this.id, this.name}) ;
 
   @override
-  State<SiteByCartier> createState() => _SiteByCartierState(id:id);
+  State<SiteByCartier> createState() => _SiteByCartierState(id:id,name:name);
 }
 
 class _SiteByCartierState extends State<SiteByCartier> {
@@ -34,7 +36,8 @@ class _SiteByCartierState extends State<SiteByCartier> {
   Map<String,dynamic> mes_sites = {};
 
   late int id ;
-  _SiteByCartierState({required this.id});
+  late String name;
+  _SiteByCartierState({required this.id,required this.name});
 
   String selectedSpecialty = 'Dentiste';
   List<String> specialities = [];
@@ -90,6 +93,7 @@ class _SiteByCartierState extends State<SiteByCartier> {
           .where((doctor) => doctor['name'].toLowerCase().contains(query.toLowerCase()))
           .toList();
       isSearchVisible=true;
+
     });
   }
   // Fonction pour charger les données des docteurs depuis l'API (utilisez votre propre logique d'appel API ici)
@@ -121,13 +125,22 @@ class _SiteByCartierState extends State<SiteByCartier> {
   late String _selectedLocation ="FR";
 
   var _locations = ['FR', 'AR', 'EN'];
-
+  static const colorizeColors = [
+    Colors.purple,
+    Colors.blue,
+    Colors.yellow,
+    Colors.red,
+  ];
   @override
   Widget build(BuildContext context) {
     Config().init(context);
 
     return Scaffold(
+      appBar: CustomAppBar(
+        appTitle:'',
+        icon: const FaIcon(Icons.arrow_back_ios),
 
+      ),
       body: sites.isEmpty
           ? const Center(
         child: CircularProgressIndicator(),
@@ -144,7 +157,49 @@ class _SiteByCartierState extends State<SiteByCartier> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Card(
+                    elevation: 2, // Ajoutez l'élévation souhaitée pour le Card
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 5, top: 5),
+                      width: MediaQuery.of(context).size.width,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: AnimatedTextKit(
+                          animatedTexts: [
+                            ColorizeAnimatedText(
+                              '${AppLocalizations.of(context)!.clinique} ${name}',
+                              textStyle: TextStyle(
+                                  fontSize: 18
+                              ),
+                              colors: colorizeColors,
+                            ),
+                          ],
+                          isRepeatingAnimation: true,
+                          pause: const Duration(milliseconds: 1000),
+                          displayFullTextOnTap: true,
+                          stopPauseOnTap: true,
+                          onTap: () {
+                            print("Tap Event");
+                          },
+                        ),
+                      ),
+                      ),
+                    ),
+                  ),
+
+
+
+
+                /*            Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -157,33 +212,40 @@ class _SiteByCartierState extends State<SiteByCartier> {
                     ),
 
                   ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 25.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "MIADI",
-                        style: TextStyle(
-                            fontSize: 11.0,
-                            color: Colors.black,
-                            fontFamily: "Metropolis",
-                            fontWeight: FontWeight.w300),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
+                ),*/
+         /*       Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child:Expanded(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 5 ,top: 5),
+                      width: MediaQuery.of(context).size.width,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color:Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 2,
+                            spreadRadius: 2,
+                            color: Colors.grey,
 
-
+                          ),
                         ],
                       ),
-                    ],
+
+                      child: Center(
+                        child: Text(
+                          "CLINQUE ${name}",
+                          style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.green,
+                              fontFamily: "Metropolis",
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-
-
-                Config.spaceSmall,
+                ),*/
 /*
 
                 Container(
@@ -241,22 +303,44 @@ class _SiteByCartierState extends State<SiteByCartier> {
                   ),
 */
 
-                Config.spaceSmall,
+      /*          Config.spaceSmall,
                  Text(
                   AppLocalizations.of(context)!.best_dr,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
+                ),*/
                 Config.spaceSmall,
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
                     onChanged: filterDoctorList,
+                    style: TextStyle(
+                      fontFamily: "Metropolis",
+                      fontWeight: FontWeight.w300,
+                      fontSize: 14,
+                      color: Colors.black,
+                    ),
                     decoration: InputDecoration(
+                      contentPadding: EdgeInsetsDirectional.only(start: 20),
                       hintText: AppLocalizations.of(context)!.dr_by_name,
+                      hintStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                      prefixIcon: Padding(
+                        padding: EdgeInsetsDirectional.only(end: 12),
+                        child: Icon(
+                            Icons.search
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.withOpacity(0.25),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(28)),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                   ),
                 ),
@@ -297,6 +381,15 @@ class _SiteByCartierState extends State<SiteByCartier> {
                                           ),
                                         ),
 
+                                        SizedBox(height: 5,),
+                                        Text(
+                                          " ${filteredSites[index]['sp']} ",
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+
                                       ],
                                     ),
                                   ),
@@ -323,6 +416,7 @@ class _SiteByCartierState extends State<SiteByCartier> {
 
                   child: Column(
                     children: List.generate(sites.length, (index) {
+
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         height: 150,
@@ -355,6 +449,16 @@ class _SiteByCartierState extends State<SiteByCartier> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
+
+                                        SizedBox(height: 5,),
+                                        Text(
+                                          " ${sites[index]['sp']} ",
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5,),
 
                                       ],
                                     ),
